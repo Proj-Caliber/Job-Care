@@ -7,3 +7,8 @@
 - Mixed Model 이해하기
 
 ## Repo 사용법
+
+## Paper review
+
+- TabNet (준비중)
+- Mixed Model (준비중)
