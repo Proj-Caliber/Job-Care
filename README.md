@@ -1,5 +1,9 @@
 # 잡케어 추천 알고리즘 경진대회
 
+## EDA
+
+## Feature Engineering
+
 ## 계획
 
 - 앙상블 기법
