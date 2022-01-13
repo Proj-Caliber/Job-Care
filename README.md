@@ -9,8 +9,9 @@
 # 적용 시켜 볼 모델
 - Logistic Regression
 - Boosting Models(Catboost, LGBM Classifier etc)
-- SGD
-- CNN
+- Tree Models
+- CNN (SGD)
+- Linear Mixed Model
 
 # Hyperparameter Search
 - Optuna (Dimension Reduction(PCA) 고려?)
