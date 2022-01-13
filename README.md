@@ -16,5 +16,3 @@
 
 - TabNet (준비중)
 - Mixed Model (준비중)
-
-test
