@@ -3,13 +3,14 @@
 
 # EDA
 - Missing value detection
-- Feature Engineering
+- Feature Engineering 
 - Visualization (matplot, seaborn)
 
 # 적용 시켜 볼 모델
 - Logistic Regression
 - Boosting Models(Catboost, LGBM Classifier etc)
-- Naive Bayes
+- SGD
 - CNN
 
 # Hyperparameter Search
+- Optuna (Dimension Reduction(PCA) 고려?)
