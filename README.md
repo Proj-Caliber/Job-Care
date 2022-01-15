@@ -14,3 +14,7 @@
 
 # Hyperparameter Search
 - Optuna (Dimension Reduction(PCA) 고려?)
+
+#제출 
+- train_final, test_final 사용(Model_Fitting ipynb에 있음) > 0.62정도
+- 더미화 시킨 파일 > train_dum_1, test_dum_1
