@@ -1,37 +1,39 @@
-# KeyError를 처리하면, 해당 클래스로 현재 대회 데이터 바로 처리 가능할 것임
-
 class DHL:
     '''
-    # co-author : @qkrwjdduf159, @AshbeeKim
+    # co-author : @qkrwjdduf159, @AshbeeKim, @oliviachchoi
+    # contributor : @kim-hyun-ho
     # co-author could be changed depands on our Team's decision
     모델은 현재 점수가 가장 높게 나왔던 정열님 모델을 기본 구조로 작성할 예정
     따라서 데이터 초반 flow는 기본 형태에서 크게 벗어나지 않는 선에서 맞출 필요 있음
     class 내 property는 def별 활용이 높거나, 기본 변수를 해하지 않도록 선언
     train, test의 경우, 기본 제공 데이터에서 EDA 중 변수가 늘어날 수 있기에 함수 내 불러올 데이터만 조정하면 되도록 작성
     '''
-    d_df = eval("D_DF").copy()
-    h_df = eval("H_DF").copy()
-    l_df = eval("L_DF").copy()
-    train = eval("train_DF").copy()
-    test = eval("test_DF").copy()
+    code_list = []
+    for csv in glob("./*.csv"):
+        if re.sub("[ㄱ-힣]", "", csv)[2]=="_":
+            code_list.append(csv)
+    for csv in code_list:
+        _n = (re.sub("[^a-zA-Z]", "", csv.split(".")[1])).lower()
+        locals()[f"{_n}_df"] = pd.read_csv(csv, encoding="utf-8", index_col=0).T.to_dict()
+
+    train = eval("train_DF")
+    test = eval("test_DF")
     
     def __init__(self):
+        # self.train = self.train_df.copy()
+        # self.test = self.test_df.copy()
         self.train, self.match_cols = self.convert_code("train")
         self.test = self.convert_code("test")
-
-        print(f"\n{self.match_cols}\n\n{self.train.head(10)}\n\n{self.test.head(10)}")
-        self.groupby_mean()
 
     def _from_cols(self):
         _func = lambda x: x.split(' ')
         cols_info, lenC = [], []
+
         for c_type in ["d", "h", "l"]:
             comp = eval(f"self.{c_type}_df")
-            cols = list(map(lambda col: _func(col), comp.columns))
-            cols = [col for col in cols if "코드" not in col]
-            lenC.append(len(cols))
+            cols = [col for col in list(comp[list(comp.keys())[0]].keys())]
+            lenC.extend([len(cols) for cnt in range(len(cols))])
             cols_info.extend(cols)
-            # len 필요함, 열에 따라 다르게 들어감.
         return cols_info, lenC
     
     def _add_drop_cols(self):
@@ -40,24 +42,22 @@ class DHL:
         _cat = {"대": "l", "중": "m", "소": "s", "세": "n"}
         _case = {"p": "person_prefer", "c": "contents_attribute"}
         _fcols, _num = self._from_cols()
-        print(_fcols)
-        for num, _key in zip(_num, _fcols):
-            print(num, _key)
-            _col, _val = " ".join(_key), _cat.get(_key[-1][0])
-            _t = (re.sub("[^a-zA-Z]", "", _col)).lower()
-            print(_t)
+
+        for num, col in zip(_num, _fcols):
+            _val = _cat.get((col.split(" "))[-1][0])
+            _t = (re.sub("[^a-zA-Z]", "", col)).lower()
             if _t != "l":
-                for idx in range(1, num+1):
+                for idx in range(1, num):
                     add_cols.append("_".join([_case["p"], _t, str(idx), _val]))
                     drop_cols.append("_".join([_case["p"], _t, str(idx)]))
-                    repeat_cols.append(_col)
+                    repeat_cols.append(col)
                 add_cols.append("_".join([_case["c"], _t, _val]))
                 drop_cols.append("_".join([_case["c"], _t]))
-                repeat_cols.append(_col)
+                repeat_cols.append(col)
             else:
                 add_cols.append("_".join([_case["c"], _t, _val]))
                 drop_cols.append("_".join([_case["c"], _t]))
-                repeat_cols.append(_col)
+                repeat_cols.append(col)
 
         return add_cols, drop_cols, repeat_cols
 
@@ -76,13 +76,10 @@ class DHL:
             return DF.drop(drops, axis=1)
 
     def groupby_mean(self):
-        self.train, self.add_cols = self.add_code("train")
-        self.test = self.add_code("test")
-
-        for col in self.add_cols:
-            _gpm = self.groupby(col)['target'].mean()
-            self.train[col] = self.train[col].map(_gmp.items())
-            self.test[col] = self.test[col].map(_gmp.items())
+        for col in self.match_cols:
+            _gbm = self.train.groupby(col)['target'].mean()
+            self.train[col] = self.train[col].map(dict(_gbm.items()))
+            self.test[col] = self.test[col].map(dict(_gbm.items()))
 
     def control_params(self, *kwargs):
         '''
