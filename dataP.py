@@ -1,3 +1,8 @@
+import re
+from glob import glob
+import numpy as np
+import pandas as pd
+
 class DHL:
     '''
     # co-author : @qkrwjdduf159, @AshbeeKim, @oliviachchoi
@@ -9,17 +14,19 @@ class DHL:
     train, test의 경우, 기본 제공 데이터에서 EDA 중 변수가 늘어날 수 있기에 함수 내 불러올 데이터만 조정하면 되도록 작성
     '''
     code_list = []
-    for csv in glob("./*.csv"):
+    code_path = input("파일이 위치한 경로를 입력해주세요. :\t")
+    for csv in glob("./*.csv" if (code_path)==None else code_path):
         if re.sub("[ㄱ-힣]", "", csv)[2]=="_":
             code_list.append(csv)
     for csv in code_list:
         _n = (re.sub("[^a-zA-Z]", "", csv.split(".")[1])).lower()
         locals()[f"{_n}_df"] = pd.read_csv(csv, encoding="utf-8", index_col=0).T.to_dict()
-
+        
     train = eval("train_DF")
     test = eval("test_DF")
     
     def __init__(self):
+        print(d_df)
         self.train, self.match_cols = self.convert_code("train")
         self.test = self.convert_code("test")
 
@@ -31,7 +38,7 @@ class DHL:
         cols_info, lenC = [], []
 
         for c_type in ["d", "h", "l"]:
-            comp = eval(f"self.{c_type}_df")
+            comp = eval(f"{c_type}_df")
             cols = [col for col in list(comp[list(comp.keys())[0]].keys())]
             lenC.extend([len(cols) for cnt in range(len(cols))])
             cols_info.extend(cols)
@@ -71,12 +78,12 @@ class DHL:
         '''
         반환된 추가 항목, 제거 항목, 반복 항목명을 기준으로 데이터 처리
         '''
-        DF = eval(f"self.{datas}").copy()
+        DF = eval(f"{datas}").copy()
 
         adds, drops, repeats = self._add_drop_cols()
         for _a, _d, _r in zip(adds, drops, repeats):
             _t = (re.sub("[^a-zA-Z]", "", _r)).lower()
-            comp = eval(f"self.{_t}_df")
+            comp = eval(f"{_t}_df")
             DF[_a] = DF[_d].apply(lambda x: comp[x][_r])
 
         if datas == "train":
