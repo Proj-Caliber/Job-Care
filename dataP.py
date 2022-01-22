@@ -20,8 +20,6 @@ class DHL:
     test = eval("test_DF")
     
     def __init__(self):
-        # self.train = self.train_df.copy()
-        # self.test = self.test_df.copy()
         self.train, self.match_cols = self.convert_code("train")
         self.test = self.convert_code("test")
 
