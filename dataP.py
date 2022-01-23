@@ -21,12 +21,10 @@ class DHL:
     for csv in code_list:
         _n = (re.sub("[^a-zA-Z]", "", csv.split(".")[1])).lower()
         locals()[f"{_n}_df"] = pd.read_csv(csv, encoding="utf-8", index_col=0).T.to_dict()
-        
-    train = eval("train_DF")
-    test = eval("test_DF")
     
-    def __init__(self):
-        print(d_df)
+    def __init__(self, train, test):
+        self.train = train.copy()
+        self.test = test.copy()
         self.train, self.match_cols = self.convert_code("train")
         self.test = self.convert_code("test")
 
@@ -78,7 +76,7 @@ class DHL:
         '''
         반환된 추가 항목, 제거 항목, 반복 항목명을 기준으로 데이터 처리
         '''
-        DF = eval(f"{datas}").copy()
+        DF = eval(f"self.{datas}").copy()
 
         adds, drops, repeats = self._add_drop_cols()
         for _a, _d, _r in zip(adds, drops, repeats):
