@@ -8,7 +8,7 @@
 - Ensemble Model
 - TabNet
 - Mixed Model
-- 
+
 ## 아쉬운 점
 - 각 데이터에 대한 EDA가 충분히 이뤄지지 못했던 느낌이 있습니다.
 - 계획에 있었던 Mixed Model을 적용시켜 보지 못했다.
